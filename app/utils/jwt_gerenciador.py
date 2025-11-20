@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 from app.core.configuracao import config
 
 
-class Autenticação_config():
+class Autenticacao_config():
     def __init__(self):
         self.ALGORITMO = "HS256"
         self.SECRET = config.SECRET_KEY
@@ -72,6 +72,7 @@ class Autenticação_config():
         return str(payload.get("type", "")).lower() == expected.lower()
 
     # Uso auxiliar: extrair user_id (sub) com segurança
+    @staticmethod
     def get_user_id_from_payload(payload: Dict[str, Any]) -> Optional[int]:
         sub = payload.get("sub")
         try:
