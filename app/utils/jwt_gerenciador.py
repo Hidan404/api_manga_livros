@@ -15,7 +15,7 @@ class Autenticacao_config():
     
     def expirar_na(self,minutos: Optional[int] = None, dias: Optional[int] = None) ->datetime:
         if minutos is not None:
-            return self.utc_now() + timedelta(minutos=minutos)
+            return self.utc_now() + timedelta(minutes=minutos)
         if dias is not None:
             return self.utc_now() + timedelta(dias=dias)
         
@@ -34,7 +34,7 @@ class Autenticacao_config():
         - expires_minutes: sobrescreve a duração padrão (em minutos)
         - role: se quiser incluir role no payload
         """
-        expire = self.expirar_na(minutes=expires_minutes or config.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = self.expirar_na(minutos=expires_minutes or config.ACCESS_TOKEN_EXPIRE_MINUTES)
         payload = self.base_payload(user_id, {"type": "access", "exp": int(expire.timestamp())})
         if role:
             payload["role"] = role
