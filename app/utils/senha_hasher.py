@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 
 pwd_contexto = CryptContext(schemes=["bcrypt"])
 
-class SenhaHash():
+class SenhaHasher():
     
     @staticmethod
     def hash_criar(senha: str) -> str:
