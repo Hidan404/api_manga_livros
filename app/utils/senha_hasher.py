@@ -15,5 +15,5 @@ class SenhaHash():
         return pwd_contexto.verify(senha, senha_hash)
     
 
-s = SenhaHash()
-s.hash_criar("hidanexagonal")    
+#s = SenhaHash()
+#s.hash_criar("hidanexagonal")    
