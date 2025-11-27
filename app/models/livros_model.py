@@ -4,7 +4,7 @@ from app.database.conexao import Base
 class Livro(Base):
     __tablename__ = "livros"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     titulo = Column(String(255), nullable=False)
     autor = Column(String(255), nullable=False)
     genero = Column(String(100), nullable=False)
