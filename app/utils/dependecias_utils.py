@@ -5,7 +5,8 @@ from app.utils.jwt_gerenciador import Autenticacao_config
 from app.database.conexao import SessionLocal
 from app.models.usuario_model import Usuario
 
-# URL fictícia só para FastAPI entender o fluxo
+# URL fictícia só para FastAPI entender o fluxo depois sera uma url real
+# URL de obtenção do token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 jwtm = Autenticacao_config()
