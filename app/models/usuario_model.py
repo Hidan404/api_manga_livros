@@ -1,5 +1,8 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.database.conexao import Base
+
+
 
 
 class Usuario(Base):
@@ -9,3 +12,6 @@ class Usuario(Base):
     nome = Column(String(100),nullable=False)
     email = Column(String(100),unique=True, nullable=False)
     senha = Column(String(255), nullable=False)
+
+    favoritos_livros = relationship("UsuarioFavoritoLivro", back_populates="usuario")
+    favoritos_mangas = relationship("UsuarioFavoritoManga", back_populates="usuario")
