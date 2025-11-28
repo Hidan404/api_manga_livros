@@ -24,7 +24,7 @@ def criar_livro(dados: LivroCreate, db: Session = Depends(get_db), usuario_logad
     return LivroController.criar(db, dados)
 
 
-@rota_livros.put("/{livro_id}", dependencies=)
+@rota_livros.put("/{livro_id}", dependencies=[Depends(require_role("admin"))])
 def atualizar_livro(livro_id: int, dados: LivroUpdate, db: Session = Depends(get_db), usuario_logado=Depends(obter_usuario_logado)):
     return LivroController.atualizar(db, livro_id, dados)
 
