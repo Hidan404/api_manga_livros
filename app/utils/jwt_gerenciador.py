@@ -79,3 +79,20 @@ class Autenticacao_config():
             return int(sub)
         except Exception:
             return None
+        
+
+    def create_refresh_token(self, user_id: int):
+        expire = self.expirar_em(minutos=config.REFRESH_TOKEN_EXPIRE_MINUTES)
+        payload = {"sub": str(user_id), "type": "refresh", "exp": expire}
+        return jwt.encode(payload, config.REFRESH_SECRET_KEY, algorithm=config.ALGORITHM)
+
+
+    def verificar_refresh_token(self, token: str):
+        try:
+            payload = jwt.decode(token, config.REFRESH_SECRET_KEY, algorithms=[config.ALGORITHM])
+            if payload.get("type") != "refresh":
+                raise JWTError("Token inválido para refresh")
+            return payload
+        except JWTError:
+            return None
+    
