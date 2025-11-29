@@ -30,3 +30,17 @@ class AuthController:
             "access_token": token,
             "token_type": "bearer"
         }
+    
+    @staticmethod
+    def refresh_token(refresh_token: str, db: Session):
+        jwtm = Autenticacao_config()
+        payload = jwtm.verificar_refresh_token(refresh_token)
+
+        if not payload:
+            raise HTTPException(status_code=401, detail="Refresh token inválido")
+
+        user_id = int(payload["sub"])
+
+        new_access = jwtm.create_access_token(user_id)
+        return {"access_token": new_access, "token_type": "bearer"}
+
