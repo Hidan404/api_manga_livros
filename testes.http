@@ -1,0 +1,82 @@
+POST http://127.0.0.1:8000/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@email.com",
+  "senha": "123456"
+}
+
+
+### COPIE O TOKEN E COLE AQUI 👇
+@token = COLE_SEU_TOKEN_AQUI
+
+
+########################################
+### TESTE CRUD - MANGÁS
+
+### LISTAR MANGÁS
+GET http://127.0.0.1:8000/mangas/
+Authorization: Bearer {{token}}
+
+
+### CRIAR MANGÁ (somente admin)
+POST http://127.0.0.1:8000/mangas/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Naruto",
+  "descricao": "Mangá clássico de ninjas"
+}
+
+
+### ATUALIZAR MANGÁ
+PUT http://127.0.0.1:8000/mangas/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Naruto Shippuden",
+  "descricao": "Agora mais forte"
+}
+
+
+### DELETAR MANGÁ
+DELETE http://127.0.0.1:8000/mangas/1
+Authorization: Bearer {{token}}
+
+
+########################################
+### TESTE CRUD - LIVROS
+
+### LISTAR LIVROS
+GET http://127.0.0.1:8000/livros/
+
+
+### CRIAR LIVRO (Admin)
+POST http://127.0.0.1:8000/livros/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Livro Python",
+  "descricao": "Aprenda Python"
+}
+
+
+########################################
+### FAVORITOS - MANGÁS
+
+### ADICIONAR FAVORITO
+POST http://127.0.0.1:8000/favoritos/mangas?manga_id=1
+Authorization: Bearer {{token}}
+
+
+### LISTAR FAVORITOS
+GET http://127.0.0.1:8000/favoritos/mangas/
+Authorization: Bearer {{token}}
+
+
+### REMOVER FAVORITO
+DELETE http://127.0.0.1:8000/favoritos/mangas/1
+Authorization: Bearer {{token}}
