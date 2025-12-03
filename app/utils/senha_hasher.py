@@ -1,19 +1,15 @@
 from passlib.context import CryptContext
 
-pwd_contexto = CryptContext(schemes=["bcrypt"])
+pwd_contexto = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-class SenhaHasher():
-    
+class SenhaHasher:
+
     @staticmethod
     def hash_criar(senha: str) -> str:
-        senha2 = senha[:72]
-        print(type(pwd_contexto.hash(senha2)))
-        return pwd_contexto.hash(senha2)
-    
+        senha = senha.encode("utf-8")[:72].decode("utf-8")
+        return pwd_contexto.hash(senha)
+
     @staticmethod
     def verificar_senha(senha: str, senha_hash: str) -> bool:
         return pwd_contexto.verify(senha, senha_hash)
-    
-
-#s = SenhaHash()
-#s.hash_criar("hidanexagonal")    
+ 
