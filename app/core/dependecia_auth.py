@@ -1,61 +1,37 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
-
-from app.database.conexao import get_db
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt, JWTError
 from app.utils.jwt_gerenciador import Autenticacao_config
-from app.models.usuario_model import Usuario
+
+oauth2 = OAuth2PasswordBearer(tokenUrl="/auth/login")
+jwt_manager = Autenticacao_config()
 
 
-bearer_scheme = HTTPBearer()
-jwt_gerenciador = Autenticacao_config()
+def get_current_user(token: str = Depends(oauth2)):
+    payload = jwt_manager.decode_token(token)
 
-
-def obter_usuario_logado(
-    token: HTTPAuthorizationCredentials = Depends(bearer_scheme),
-    db: Session = Depends(get_db)
-):
-    try:
-        payload = jwt_gerenciador =(token.credentials)
-
-        # Verifica o tipo do token
-        if payload.get("type") != "access":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token inválido para acesso"
-            )
-
-        user_id = int(payload.get("sub"))
-        usuario = db.query(Usuario).filter(Usuario.id == user_id).first()
-
-        if not usuario:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Usuário não encontrado"
-            )
-
-        return usuario
-
-    except Exception:
+    if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido ou expirado"
         )
 
+    return {"id": int(payload["sub"])}
+
 
 def require_role(role: str):
-    """
-    Dependência dinâmica para verificar roles
-    Exemplo: Depends(require_role("admin"))
-    """
-    def role_checker(
-        usuario_logado: Usuario = Depends(obter_usuario_logado)
-    ):
-        if usuario_logado.role != role:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Permissão negada. Necessário papel '{role}'."
-            )
-        return usuario_logado
+    def role_checker(user=Depends(get_current_user)):
+        from app.database.conexao import SessionLocal
+        from app.models.usuario_model import Usuario
 
+        db = SessionLocal()
+        usuario = db.query(Usuario).filter(Usuario.id == user["id"]).first()
+        db.close()
+
+        if usuario is None or usuario.role != role:
+            raise HTTPException(
+                status_code=403,
+                detail="Acesso negado"
+            )
+        return usuario
     return role_checker
