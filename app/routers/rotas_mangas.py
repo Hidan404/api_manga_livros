@@ -49,3 +49,7 @@ def deletar_manga(
     usuario_logado = Depends(get_current_user)
 ):
     return MangaController.deletar(db, manga_id)
+
+@rota_mangas.post("/teste-admin")
+def teste_admin(usuario_logado = Depends(get_current_user)):
+    return {"usuario": usuario_logado}

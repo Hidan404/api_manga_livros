@@ -13,6 +13,7 @@ def registrar(dados: LoginSchema, db: Session = Depends(get_db)):
     senha_hash = senha_hashe.hash_criar(dados.senha)
 
     novo_usuario = Usuario(
+        nome=dados.nome,
         email=dados.email,
         senha=senha_hash
     )
