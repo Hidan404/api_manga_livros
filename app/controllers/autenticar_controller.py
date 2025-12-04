@@ -18,18 +18,23 @@ class AuthController:
                 detail="Email ou senha incorretos"
             )
 
-        if not SenhaHasher.verificar_senha(senha, usuario.senha_hash):
+        if not SenhaHasher.verificar_senha(senha, usuario.senha):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Email ou senha incorretos"
             )
 
-        token = jwt.create_access_token(user_id=usuario.id)
+        token = jwt.create_access_token(
+            user_id=usuario.id,
+            role=usuario.role   # 🔴 ISSO AQUI É O MAIS IMPORTANTE
+        )   
 
         return {
             "access_token": token,
-            "token_type": "bearer"
+            "token_type": "bearer",
+            "role": usuario.role    
         }
+
     
     @staticmethod
     def refresh_token(refresh_token: str, db: Session):

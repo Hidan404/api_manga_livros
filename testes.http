@@ -2,13 +2,16 @@ POST http://127.0.0.1:8000/auth/register
 Content-Type: application/json
 
 {
+  "nome": "Admin",
   "email": "admin@email.com",
   "senha": "123456"
 }
 
 
 ### COPIE O TOKEN E COLE AQUI 👇
-@token = COLE_SEU_TOKEN_AQUI
+@token = @token = <COLE_AQUI_O_TOKEN_DO_LOGIN>
+
+
 
 
 ########################################
@@ -17,6 +20,11 @@ Content-Type: application/json
 ### LISTAR MANGÁS
 GET http://127.0.0.1:8000/mangas/
 Authorization: Bearer {{token}}
+
+### TESTE ADMIN
+POST http://127.0.0.1:8000/mangas/teste-admin
+Authorization: Bearer SEU_TOKEN
+
 
 
 ### CRIAR MANGÁ (somente admin)

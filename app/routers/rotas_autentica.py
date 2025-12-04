@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.database.conexao import get_db
 from app.schemas.autentica_schemas import LoginSchema, TokenResposta
 from app.controllers.autenticar_controller import AuthController
+from app.schemas.autentica_schemas import RefreshTokenSchema
+from app.controllers.autenticar_controller import AuthController
 
 rota = APIRouter(prefix="/auth", tags=["Autenticação"])
 auth_controller = AuthController()
@@ -11,6 +13,11 @@ auth_controller = AuthController()
 @rota.post("/login", response_model=TokenResposta)
 def login(payload: LoginSchema, db: Session = Depends(get_db)):
     return auth_controller.login(db, payload.email, payload.senha)
+
+
+@rota.post("/refresh")
+def refresh_token(payload: RefreshTokenSchema, db: Session = Depends(get_db)):
+    return auth_controller.refresh_token(payload.refresh_token, db)
 
 
 """
