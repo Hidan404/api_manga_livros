@@ -12,5 +12,6 @@ class UsuarioResposta(BaseModel):
     email: EmailStr
     role: str
 
-    class Config:
-        para_atributos = True
+    model_config = {
+        "from_attributes": True
+    }

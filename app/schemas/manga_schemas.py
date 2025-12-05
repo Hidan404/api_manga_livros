@@ -8,11 +8,10 @@ class MangaBase(BaseModel):
     titulo: str = Field(..., min_length=1)
     autor: str = Field(..., min_length=1)
     volumes: Optional[int] = Field(None, ge=1)
-    status: Optional[str] = Field(
-        None,
-        description="Ex: 'Em andamento', 'Concluído', 'Hiato'"
-    )
-    descricao: Optional[str] = None
+    genero: str = Field(..., min_length=1)       # AGORA OBRIGATÓRIO
+    status: str = Field(..., min_length=1)
+    sinopse: Optional[str] = None
+    capa_url: Optional[str] = None
 
 
 class MangaCreate(MangaBase):

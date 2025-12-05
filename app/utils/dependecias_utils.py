@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from app.utils.jwt_gerenciador import Autenticacao_config
-from app.database.conexao import sessao_local as SessionLocal
+from app.database.conexao import SessionLocal
 from app.models.usuario_model import Usuario
 
 # URL fictícia só para FastAPI entender o fluxo depois sera uma url real

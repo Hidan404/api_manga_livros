@@ -22,7 +22,13 @@ class LivroController:
 
     @staticmethod
     def criar(db: Session, dados: LivroCreate):
-        novo = Livro(**dados.model_dump())
+        novo = Livro(
+            titulo=dados.titulo,
+            autor=dados.autor,
+            sinopse=dados.descricao,
+            ano=dados.ano,
+            genero=dados.genero
+    )
         db.add(novo)
         db.commit()
         db.refresh(novo)
