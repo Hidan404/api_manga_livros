@@ -1,15 +1,29 @@
+########################################
+### REGISTRAR USUÁRIO ADMIN
 POST http://127.0.0.1:8000/auth/register
 Content-Type: application/json
 
 {
-  "nome": "Admin",
-  "email": "admin@email.com",
-  "senha": "123456"
+  "nome": "Admin3",
+  "email": "admin3@email.com",
+  "senha": "123456",
+  "role": "admin"
 }
 
 
-### COPIE O TOKEN E COLE AQUI 👇
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc2NDgxMzcxOH0.nyg8-8F-0j49T5lxt0G29-LEmeSoZwp2DYvIsf2pkXk
+########################################
+### LOGIN (PEGAR TOKEN ADMIN)
+POST http://127.0.0.1:8000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin3@email.com",
+  "senha": "123456"
+}
+
+########################################
+### COLE O TOKEN DO LOGIN AQUI 👇
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1IiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc2NDkwMDY5Mywicm9sZSI6ImFkbWluIn0.9XGDKB-o2lyjm-rvd1PBJ0tXuA7UeeaCmjU9fLIXNdU
 
 
 
@@ -17,14 +31,13 @@ Content-Type: application/json
 ########################################
 ### TESTE CRUD - MANGÁS
 
-### LISTAR MANGÁS
+### LISTAR MANGÁS (qualquer usuário)
 GET http://127.0.0.1:8000/mangas/
-Authorization: Bearer {{token}}
 
-### TESTE ADMIN
+
+### TESTE ADMIN (somente admin)
 POST http://127.0.0.1:8000/mangas/teste-admin
-Authorization: Bearer SEU_TOKEN
-
+Authorization: Bearer {{token}}
 
 
 ### CRIAR MANGÁ (somente admin)
@@ -34,12 +47,17 @@ Content-Type: application/json
 
 {
   "titulo": "Naruto",
-  "descricao": "Mangá clássico de ninjas"
+  "autor": "Masashi Kishimoto",
+  "genero": "Shounen",
+  "volumes": 72,
+  "status": "Concluído",
+  "descricao": "Mangá clássico sobre ninjas"
 }
 
 
-### ATUALIZAR MANGÁ
-PUT http://127.0.0.1:8000/mangas/1
+
+### ATUALIZAR MANGÁ (somente admin)
+PUT http://127.0.0.1:8000/mangas/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -49,31 +67,33 @@ Content-Type: application/json
 }
 
 
-### DELETAR MANGÁ
-DELETE http://127.0.0.1:8000/mangas/1
+### DELETAR MANGÁ (somente admin)
+DELETE http://127.0.0.1:8000/mangas/2
 Authorization: Bearer {{token}}
 
 
 ########################################
 ### TESTE CRUD - LIVROS
 
-### LISTAR LIVROS
+### LISTAR LIVROS (público)
 GET http://127.0.0.1:8000/livros/
 
 
-### CRIAR LIVRO (Admin)
+### CRIAR LIVRO (admin)
 POST http://127.0.0.1:8000/livros/
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "titulo": "Livro Python",
-  "descricao": "Aprenda Python"
+  "autor": "Guido van Rossum",
+  "descricao": "Aprenda Python do zero",
+  "ano": 2024,
+  "genero": "Tecnologia"
 }
 
-
 ########################################
-### FAVORITOS - MANGÁS
+### FAVORITOS - MANGÁS (usuário autenticado)
 
 ### ADICIONAR FAVORITO
 POST http://127.0.0.1:8000/favoritos/mangas?manga_id=1
