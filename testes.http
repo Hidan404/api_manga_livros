@@ -4,81 +4,86 @@ POST http://127.0.0.1:8000/auth/register
 Content-Type: application/json
 
 {
-  "nome": "Admin3",
-  "email": "admin3@email.com",
+  "nome": "Admin10",
+  "email": "admin10@email.com",
   "senha": "123456",
   "role": "admin"
 }
 
+###
 
 ########################################
-### LOGIN (PEGAR TOKEN ADMIN)
+### LOGIN (PEGAR TOKEN)
 POST http://127.0.0.1:8000/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin3@email.com",
+  "email": "admin10@email.com",
   "senha": "123456"
 }
 
+###
+
 ########################################
-### COLE O TOKEN DO LOGIN AQUI 👇
+### 👇 COLE O TOKEN DO LOGIN AQUI
 @token = @token = <COLE_AQUI_O_TOKEN_DO_LOGIN>
 
 
 
-
-
 ########################################
-### TESTE CRUD - MANGÁS
+### CRUD MANGÁS
 
-### LISTAR MANGÁS (qualquer usuário)
+### LISTAR MANGÁS (público)
 GET http://127.0.0.1:8000/mangas/
 
+###
 
 ### TESTE ADMIN (somente admin)
 POST http://127.0.0.1:8000/mangas/teste-admin
 Authorization: Bearer {{token}}
 
+###
 
-### CRIAR MANGÁ (somente admin)
+### CRIAR MANGÁ (admin)
 POST http://127.0.0.1:8000/mangas/
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "Naruto",
-  "autor": "Masashi Kishimoto",
-  "genero": "Shounen",
-  "volumes": 72,
+  "titulo": "Bleach",
+  "autor": "Tite Kubo",
+  "genero": "Shonen",
+  "volumes": 74,
   "status": "Concluído",
-  "descricao": "Mangá2 clássico sobre ninjas"
+  "descricao": "Mangá sobre shinigamis e hollows."
 }
 
+###
 
-
-### ATUALIZAR MANGÁ (somente admin)
-PUT http://127.0.0.1:8000/mangas/5
+### ATUALIZAR MANGÁ (admin)
+PUT http://127.0.0.1:8000/mangas/7
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "Naruto Shippuden",
-  "descricao": "Agora mais forte 200 anos depois"
+  "descricao": "Atualizado via testes"
 }
 
+###
 
-### DELETAR MANGÁ (somente admin)
-DELETE http://127.0.0.1:8000/mangas/5
+### DELETAR MANGÁ (admin)
+DELETE http://127.0.0.1:8000/mangas/6
 Authorization: Bearer {{token}}
 
+###
 
 ########################################
-### TESTE CRUD - LIVROS
+### CRUD LIVROS
 
-### LISTAR LIVROS (público)
+### LISTAR LIVROS
 GET http://127.0.0.1:8000/livros/
 
+###
 
 ### CRIAR LIVRO (admin)
 POST http://127.0.0.1:8000/livros/
@@ -86,26 +91,52 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "Livro Python 2",
-  "autor": "Guido van Rossum",
-  "descricao": "Aprenda Python do zero",
-  "ano": 2024,
-  "genero": "Tecnologia"
+  "titulo": "hellraiser",
+  "autor": "Clive Barker",
+  "descricao": "Livro de terror sobre os cenobitas.",
+  "ano": 1986,
+  "genero": "Terror"
 }
 
-########################################
-### FAVORITOS - MANGÁS (usuário autenticado)
+###
 
-### ADICIONAR FAVORITO
-POST http://127.0.0.1:8000/favoritos/manga/4
+########################################
+### FAVORITOS - MANGÁS
+
+### ADICIONAR MANGÁ AOS FAVORITOS
+POST http://127.0.0.1:8000/favoritos/manga/7
 Authorization: Bearer {{token}}
 
+###
 
-### LISTAR FAVORITOS
+### LISTAR FAVORITOS DE MANGÁS
 GET http://127.0.0.1:8000/favoritos/manga/
 Authorization: Bearer {{token}}
 
+###
 
-### REMOVER FAVORITO
-DELETE http://127.0.0.1:8000/favoritos/mangas/6
+### REMOVER MANGÁ DOS FAVORITOS
+DELETE http://127.0.0.1:8000/favoritos/manga/3
 Authorization: Bearer {{token}}
+
+###
+
+########################################
+### FAVORITOS - LIVROS
+
+### ADICIONAR LIVRO NOS FAVORITOS
+POST http://127.0.0.1:8000/favoritos/livro/1
+Authorization: Bearer {{token}}
+
+###
+
+### LISTAR FAVORITOS DE LIVROS
+GET http://127.0.0.1:8000/favoritos/livro/
+Authorization: Bearer {{token}}
+
+###
+
+### REMOVER LIVRO DOS FAVORITOS
+DELETE http://127.0.0.1:8000/favoritos/livro/1
+Authorization: Bearer {{token}}
+###

@@ -83,14 +83,14 @@ class FavoritoMangaController:
         return favorito
     
     @staticmethod
-    def listar_favoritos(usuario_id: int, db: Session):
+    def listar_favoritos(db: Session, usuario_id: int):
         return db.query(UsuarioFavoritoManga).filter_by(usuario_id=usuario_id).all()
 
     @staticmethod
-    def remover_favorito(usuario_id: int, manga_id: int, db: Session):
+    def remover_favorito(db: Session, usuario_id: int, favorito_id: int):
         favorito = db.query(UsuarioFavoritoManga).filter_by(
             usuario_id=usuario_id,
-            manga_id=manga_id
+            id=favorito_id
         ).first()
 
         if not favorito:
@@ -98,5 +98,5 @@ class FavoritoMangaController:
 
         db.delete(favorito)
         db.commit()
-
         return {"detail": "Favorito removido com sucesso"}
+

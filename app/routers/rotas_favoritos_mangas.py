@@ -11,9 +11,10 @@ rota_favoritos_manga = APIRouter(prefix="/favoritos/manga", tags=["Favoritos - M
 def adicionar_favorito(manga_id: int, db: Session = Depends(get_db), usuario=Depends(get_current_user)):
     return FavoritoMangaController.adicionar_favorito(db, usuario["id"], manga_id)
 
-@rota_favoritos_manga.delete("/{manga_id}")
-def remover_favorito(manga_id: int, db: Session = Depends(get_db), usuario=Depends(get_current_user)):
-    return FavoritoMangaController.remover_favorito(db, usuario["id"], manga_id)
+@rota_favoritos_manga.delete("/{favorito_id}")
+def remover_favorito(favorito_id: int, db: Session = Depends(get_db), usuario=Depends(get_current_user)):
+    return FavoritoMangaController.remover_favorito(db, usuario["id"], favorito_id)
+
 
 @rota_favoritos_manga.get("/")
 def listar_favoritos(db: Session = Depends(get_db), usuario=Depends(get_current_user)):
