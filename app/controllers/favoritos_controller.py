@@ -10,7 +10,7 @@ from app.models.manga_model import Manga
 class FavoritoLivroController:
 
     @staticmethod
-    def adicionar_favorito(usuario_id: int, livro_id: int, db: Session):
+    def adicionar_favorito(db: Session, usuario_id: int, livro_id: int):
         livro = db.query(Livro).filter(Livro.id == livro_id).first()
         if not livro:
             raise HTTPException(status_code=404, detail="Livro não encontrado")
@@ -23,11 +23,17 @@ class FavoritoLivroController:
         if ja_existe:
             raise HTTPException(status_code=400, detail="Livro já está nos favoritos")
 
-        favorito = UsuarioFavoritoLivro(usuario_id=usuario_id, livro_id=livro_id)
+        favorito = UsuarioFavoritoLivro(
+            usuario_id=usuario_id,
+            livro_id=livro_id
+        )
+
         db.add(favorito)
         db.commit()
         db.refresh(favorito)
+
         return favorito
+
 
     @staticmethod
     def listar_favoritos(usuario_id: int, db: Session):
@@ -51,10 +57,11 @@ class FavoritoLivroController:
 class FavoritoMangaController:
 
     @staticmethod
-    def adicionar_favorito(usuario_id: int, manga_id: int, db: Session):
+    def adicionar_favorito(db: Session, usuario_id: int, manga_id: int):
+
         manga = db.query(Manga).filter(Manga.id == manga_id).first()
         if not manga:
-            raise HTTPException(status_code=404, detail="Mangá não encontrado")
+            raise HTTPException(status_code=404, detail="Manga não encontrado")
 
         ja_existe = db.query(UsuarioFavoritoManga).filter_by(
             usuario_id=usuario_id,
@@ -62,23 +69,28 @@ class FavoritoMangaController:
         ).first()
 
         if ja_existe:
-            raise HTTPException(status_code=400, detail="Mangá já está nos favoritos")
+            raise HTTPException(status_code=400, detail="Manga já está nos favoritos")
 
-        favorito = UsuarioFavoritoManga(usuario_id=usuario_id, manga_id=manga_id)
+        favorito = UsuarioFavoritoManga(
+            usuario_id=usuario_id,
+            manga_id=manga_id
+        )
+
         db.add(favorito)
         db.commit()
         db.refresh(favorito)
-        return favorito
 
+        return favorito
+    
     @staticmethod
     def listar_favoritos(usuario_id: int, db: Session):
         return db.query(UsuarioFavoritoManga).filter_by(usuario_id=usuario_id).all()
 
     @staticmethod
-    def remover_favorito(usuario_id: int, favorito_id: int, db: Session):
+    def remover_favorito(usuario_id: int, manga_id: int, db: Session):
         favorito = db.query(UsuarioFavoritoManga).filter_by(
             usuario_id=usuario_id,
-            id=favorito_id
+            manga_id=manga_id
         ).first()
 
         if not favorito:

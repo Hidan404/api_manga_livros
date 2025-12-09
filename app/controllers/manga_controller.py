@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.models.manga_model import Manga
+from app.models.favoritos_model import UsuarioFavoritoManga
 from app.schemas.manga_schemas import MangaCreate, MangaUpdate
 
 
@@ -42,6 +43,7 @@ class MangaController:
     @staticmethod
     def deletar(db: Session, manga_id: int):
         manga = MangaController.obter_por_id(db, manga_id)
+        db.query(UsuarioFavoritoManga).filter(UsuarioFavoritoManga.manga_id == manga_id).delete()
         db.delete(manga)
         db.commit()
         return {"mensagem": "Mangá removido com sucesso."}

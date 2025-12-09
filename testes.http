@@ -28,6 +28,7 @@ Content-Type: application/json
 
 
 
+
 ########################################
 ### TESTE CRUD - MANGÁS
 
@@ -51,24 +52,24 @@ Content-Type: application/json
   "genero": "Shounen",
   "volumes": 72,
   "status": "Concluído",
-  "descricao": "Mangá clássico sobre ninjas"
+  "descricao": "Mangá2 clássico sobre ninjas"
 }
 
 
 
 ### ATUALIZAR MANGÁ (somente admin)
-PUT http://127.0.0.1:8000/mangas/2
+PUT http://127.0.0.1:8000/mangas/5
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "titulo": "Naruto Shippuden",
-  "descricao": "Agora mais forte"
+  "descricao": "Agora mais forte 200 anos depois"
 }
 
 
 ### DELETAR MANGÁ (somente admin)
-DELETE http://127.0.0.1:8000/mangas/2
+DELETE http://127.0.0.1:8000/mangas/5
 Authorization: Bearer {{token}}
 
 
@@ -85,7 +86,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "Livro Python",
+  "titulo": "Livro Python 2",
   "autor": "Guido van Rossum",
   "descricao": "Aprenda Python do zero",
   "ano": 2024,
@@ -96,15 +97,15 @@ Content-Type: application/json
 ### FAVORITOS - MANGÁS (usuário autenticado)
 
 ### ADICIONAR FAVORITO
-POST http://127.0.0.1:8000/favoritos/mangas?manga_id=1
+POST http://127.0.0.1:8000/favoritos/manga/4
 Authorization: Bearer {{token}}
 
 
 ### LISTAR FAVORITOS
-GET http://127.0.0.1:8000/favoritos/mangas/
+GET http://127.0.0.1:8000/favoritos/manga/
 Authorization: Bearer {{token}}
 
 
 ### REMOVER FAVORITO
-DELETE http://127.0.0.1:8000/favoritos/mangas/1
+DELETE http://127.0.0.1:8000/favoritos/mangas/6
 Authorization: Bearer {{token}}
