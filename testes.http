@@ -29,7 +29,6 @@ Content-Type: application/json
 @token = @token = <COLE_AQUI_O_TOKEN_DO_LOGIN>
 
 
-
 ########################################
 ### CRUD MANGÁS
 
@@ -50,18 +49,18 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "Bleach",
-  "autor": "Tite Kubo",
-  "genero": "Shonen",
-  "volumes": 74,
-  "status": "Concluído",
-  "descricao": "Mangá sobre shinigamis e hollows."
+  "titulo": "btoom!",
+  "autor": "Junya Inoue",
+  "genero": "Ação, Suspense",
+  "volumes": 26,
+  "status": "Completo",
+  "descricao": "Manga sobre um jogo de sobrevivência em uma ilha deserta."
 }
 
 ###
 
 ### ATUALIZAR MANGÁ (admin)
-PUT http://127.0.0.1:8000/mangas/7
+PUT http://127.0.0.1:8000/mangas/9
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -72,7 +71,7 @@ Content-Type: application/json
 ###
 
 ### DELETAR MANGÁ (admin)
-DELETE http://127.0.0.1:8000/mangas/6
+DELETE http://127.0.0.1:8000/mangas/9
 Authorization: Bearer {{token}}
 
 ###
@@ -91,11 +90,11 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "hellraiser",
+  "titulo": "Cabal",
   "autor": "Clive Barker",
-  "descricao": "Livro de terror sobre os cenobitas.",
-  "ano": 1986,
-  "genero": "Terror"
+  "descricao": "Um romance de horror que explora os limites entre a realidade e o sobrenatural.",
+  "ano": 1991,
+  "genero": "Horror, Fantasia"
 }
 
 ###
@@ -116,7 +115,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### REMOVER MANGÁ DOS FAVORITOS
-DELETE http://127.0.0.1:8000/favoritos/manga/3
+DELETE http://127.0.0.1:8000/favoritos/manga/5
 Authorization: Bearer {{token}}
 
 ###
@@ -125,18 +124,18 @@ Authorization: Bearer {{token}}
 ### FAVORITOS - LIVROS
 
 ### ADICIONAR LIVRO NOS FAVORITOS
-POST http://127.0.0.1:8000/favoritos/livro/1
+POST http://127.0.0.1:8000/favoritos/livros/8
 Authorization: Bearer {{token}}
 
 ###
 
 ### LISTAR FAVORITOS DE LIVROS
-GET http://127.0.0.1:8000/favoritos/livro/
+GET http://127.0.0.1:8000/favoritos/livros/
 Authorization: Bearer {{token}}
 
 ###
 
 ### REMOVER LIVRO DOS FAVORITOS
-DELETE http://127.0.0.1:8000/favoritos/livro/1
+DELETE http://127.0.0.1:8000/favoritos/livros/2
 Authorization: Bearer {{token}}
 ###
