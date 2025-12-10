@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Date
+from sqlalchemy import Column, Integer, String, Text, Date, relationship
 from app.database.conexao import Base
 
 class Manga(Base):
@@ -14,3 +14,9 @@ class Manga(Base):
     data_lancamento = Column(Date, nullable=True)
     sinopse = Column(Text, nullable=True)
     capa_url = Column(String(500), nullable=True)
+    
+    volumes = relationship(
+        "MangaVolume",
+        back_populates="manga",
+        cascade="all, delete"
+    )
