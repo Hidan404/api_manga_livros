@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ########################################
 ### 👇 COLE O TOKEN DO LOGIN AQUI
-@token = @token = <COLE_AQUI_O_TOKEN_DO_LOGIN>
+@token = <COLE_AQUI_O_TOKEN_DO_LOGIN>
 
 
 ########################################
@@ -60,7 +60,7 @@ Content-Type: application/json
 ###
 
 ### ATUALIZAR MANGÁ (admin)
-PUT http://127.0.0.1:8000/mangas/9
+PUT http://127.0.0.1:8000/mangas/1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -71,7 +71,7 @@ Content-Type: application/json
 ###
 
 ### DELETAR MANGÁ (admin)
-DELETE http://127.0.0.1:8000/mangas/9
+DELETE http://127.0.0.1:8000/mangas/1
 Authorization: Bearer {{token}}
 
 ###
@@ -103,7 +103,7 @@ Content-Type: application/json
 ### FAVORITOS - MANGÁS
 
 ### ADICIONAR MANGÁ AOS FAVORITOS
-POST http://127.0.0.1:8000/favoritos/manga/7
+POST http://127.0.0.1:8000/favoritos/manga/1
 Authorization: Bearer {{token}}
 
 ###
@@ -124,7 +124,7 @@ Authorization: Bearer {{token}}
 ### FAVORITOS - LIVROS
 
 ### ADICIONAR LIVRO NOS FAVORITOS
-POST http://127.0.0.1:8000/favoritos/livros/8
+POST http://127.0.0.1:8000/favoritos/livros/1
 Authorization: Bearer {{token}}
 
 ###
@@ -136,6 +136,6 @@ Authorization: Bearer {{token}}
 ###
 
 ### REMOVER LIVRO DOS FAVORITOS
-DELETE http://127.0.0.1:8000/favoritos/livros/2
+DELETE http://127.0.0.1:8000/favoritos/livros/1
 Authorization: Bearer {{token}}
 ###

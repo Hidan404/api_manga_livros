@@ -7,7 +7,7 @@ from datetime import datetime
 class MangaBase(BaseModel):
     titulo: str = Field(..., min_length=1)
     autor: str = Field(..., min_length=1)
-    volumes: Optional[int] = Field(None, ge=1)
+    #volumes: Optional[int] = Field(None, ge=1)
     genero: str = Field(..., min_length=1)       # AGORA OBRIGATÓRIO
     status: str = Field(..., min_length=1)
     sinopse: Optional[str] = None
