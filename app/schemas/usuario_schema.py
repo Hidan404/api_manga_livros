@@ -4,7 +4,7 @@ class UsuarioCriar(BaseModel):
     nome: str
     email: EmailStr
     senha: str
-    role: str | None = "user"
+    #role: str | None = "admin"
 
 class UsuarioResposta(BaseModel):
     id: int

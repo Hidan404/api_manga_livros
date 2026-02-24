@@ -16,7 +16,8 @@ def registrar(dados: UsuarioCriar, db: Session = Depends(get_db)):
         nome=dados.nome,
         email=dados.email,
         senha=senha_hash,
-        role=dados.role
+        #role=dados.role
+        role = "admin"
     )
 
     db.add(novo_usuario)
