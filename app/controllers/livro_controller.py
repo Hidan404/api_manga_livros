@@ -51,3 +51,7 @@ class LivroController:
         db.delete(livro)
         db.commit()
         return {"mensagem": "Livro removido com sucesso."}
+
+
+    @staticmethod
+    def   
