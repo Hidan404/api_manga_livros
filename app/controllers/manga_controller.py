@@ -47,3 +47,12 @@ class MangaController:
         db.delete(manga)
         db.commit()
         return {"mensagem": "Mangá removido com sucesso."}
+    
+    @staticmethod
+    def upload_capa(db: Session, manga_id: int, arquivo):
+        manga = MangaController.obter_por_id(db, manga_id)
+        conteudo = arquivo.file.read()
+        manga.capa_url = conteudo
+        db.commit()
+        db.refresh(manga)
+        return {"mensagem": "Capa do mangá atualizada com sucesso."}

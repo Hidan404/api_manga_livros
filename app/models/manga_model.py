@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Date
+from sqlalchemy import Column, Integer, String, Text, Date, String
 from sqlalchemy.orm import relationship
 from app.database.conexao import Base
 from app.models.manga_volume_model import MangaVolume
@@ -15,8 +15,7 @@ class Manga(Base):
     status = Column(String(50), nullable=False)  
     data_lancamento = Column(Date, nullable=True)
     sinopse = Column(Text, nullable=True)
-    capa_url = Column(String(500), nullable=True)
-    
+    capa_url = Column(String(500), nullable=True)  # URL ou caminho para a capa do manga
     # Relacionamento com MangaVolume (lista de volumes de manga)
     volumes = relationship(
         "MangaVolume",

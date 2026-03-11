@@ -11,7 +11,7 @@ class MangaBase(BaseModel):
     genero: str = Field(..., min_length=1)       # AGORA OBRIGATÓRIO
     status: str = Field(..., min_length=1)
     sinopse: Optional[str] = None
-    capa_url: Optional[str] = None
+    #capa_url: Optional[str] = None
 
 
 class MangaCreate(MangaBase):

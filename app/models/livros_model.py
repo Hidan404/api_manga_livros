@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Text, DateTime, func
+from sqlalchemy import Column, Integer, String, Date, Text, DateTime, String, func
 from app.database.conexao import Base
 
 class Livro(Base):
@@ -14,3 +14,4 @@ class Livro(Base):
     sinopse = Column(Text, nullable=True)
     capa_url = Column(String(500), nullable=True)
     criado_em = Column(DateTime, server_default=func.now(), nullable=False)
+    capa_livro = Column(String(500), nullable=True)

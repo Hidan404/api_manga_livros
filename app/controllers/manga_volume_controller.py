@@ -80,4 +80,21 @@ class MangaVolumeController:
         db.commit()
 
         return {"detail": "Volume removido com sucesso"}
+    
+    @staticmethod
+    def upload_capa_volume(db: Session, manga_id: int, numero: int, arquivo):
+        volume = db.query(MangaVolume).filter_by(
+            manga_id=manga_id,
+            numero=numero
+        ).first()
+
+        if not volume:
+            raise HTTPException(status_code=404, detail="Volume não encontrado")
+
+        conteudo = arquivo.file.read()
+        volume.capa_volume = conteudo
+
+        db.commit()
+        db.refresh(volume)
+        return {"mensagem": "Capa do volume atualizada com sucesso."}
 
