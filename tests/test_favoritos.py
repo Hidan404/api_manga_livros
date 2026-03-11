@@ -1,12 +1,14 @@
-import requests
+from fastapi.testclient import TestClient
+from app.main import app
 
-BASE_URL = "http://127.0.0.1:8000"
 
+client = TestClient(app)
 
-def test_add_favorito_manga(headers):
-    r = requests.post(
-        f"{BASE_URL}/favoritos/manga/1",
-        headers=headers
+def test_adicionar_favorito(auth_token):
+
+    response = client.post(
+        "/favoritos/manga/1",
+        headers={"Authorization": f"Bearer {auth_token}"}
     )
 
-    assert r.status_code in (200, 201)
+    assert response.status_code in [200, 201]

@@ -4,6 +4,8 @@ from app.database.conexao import get_db
 from app.models.usuario_model import Usuario
 from app.schemas.usuario_schema import UsuarioCriar
 from app.utils.senha_hasher import SenhaHasher
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException, status
 
 rota = APIRouter(prefix="/auth")
 
@@ -19,9 +21,14 @@ def registrar(dados: UsuarioCriar, db: Session = Depends(get_db)):
         #role=dados.role
         role = "admin"
     )
-
-    db.add(novo_usuario)
-    db.commit()
-    db.refresh(novo_usuario)
-
+    try:
+        db.add(novo_usuario)
+        db.commit()
+        db.refresh(novo_usuario)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email já cadastrado."
+        )
     return {"msg": "Usuário criado com sucesso"}

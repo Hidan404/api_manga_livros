@@ -4,14 +4,13 @@ from app.main import app
 
 client = TestClient(app)
 
-def test_criar_livro(auth_token):
+def test_adicionar_volume(auth_token):
 
     response = client.post(
-        "/livros/",
+        "/mangas/1/volumes",
         headers={"Authorization": f"Bearer {auth_token}"},
         json={
-            "titulo": "Clean Code",
-            "autor": "Robert Martin"
+            "numero": 1
         }
     )
 

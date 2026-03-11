@@ -54,4 +54,10 @@ class LivroController:
 
 
     @staticmethod
-    def   
+    def upload_capa(db: Session, livro_id: int, arquivo):
+        livro = LivroController.obter_por_id(db, livro_id)
+        conteudo = arquivo.file.read()
+        livro.capa_livro = conteudo
+        db.commit()
+        db.refresh(livro)
+        return {"mensagem": "Capa do livro atualizada com sucesso."}

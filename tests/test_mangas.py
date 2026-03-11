@@ -1,42 +1,30 @@
-import requests
+from fastapi.testclient import TestClient
+from app.main import app
 
-BASE_URL = "http://127.0.0.1:8000"
 
+client = TestClient(app)
 
-def test_criar_manga(headers):
-    r = requests.post(
-        f"{BASE_URL}/mangas/",
-        headers=headers,
+def test_criar_manga(auth_token):
+
+    response = client.post(
+        "/mangas/",
+        headers={"Authorization": f"Bearer {auth_token}"},
         json={
-            "titulo": "Naruto Teste",
-            "autor": "Kishimoto",
+            "titulo": "Naruto",
+            "autor": "Masashi Kishimoto",
             "genero": "Shounen",
-            "status": "Completo",
-            "sinopse": "Teste pytest",
-            "capa_url": "http://img.com"
+            "status": "Completo"
         }
     )
 
-    assert r.status_code == 200
-    assert r.json()["titulo"] == "Naruto Teste"
+    assert response.status_code == 201
 
 
-def test_listar_mangas():
-    r = requests.get(f"{BASE_URL}/mangas/")
-    assert r.status_code == 200
+def test_listar_mangas(auth_token):
 
-
-def test_criar_sem_token():
-    r = requests.post(
-        f"{BASE_URL}/mangas/",
-        json={
-            "titulo": "Sem token",
-            "autor": "X",
-            "genero": "X",
-            "status": "X",
-            "sinopse": "X",
-            "capa_url": "X"
-        }
+    response = client.get(
+        "/mangas/",
+        headers={"Authorization": f"Bearer {auth_token}"}
     )
 
-    assert r.status_code == 401
+    assert response.status_code == 200

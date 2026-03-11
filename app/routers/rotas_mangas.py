@@ -78,3 +78,26 @@ def upload_capa_volume(
 ):
     
     return MangaVolumeController.upload_capa_volume(db, manga_id, numero, arquivo)
+
+
+@rota_mangas.get("/{manga_id}/volumes")
+def listar_volumes(manga_id: int, db: Session = Depends(get_db)):
+    return MangaVolumeController.listar_volumes(db, manga_id)
+
+
+@rota_mangas.get("/{manga_id}/volumes/{numero}")
+def obter_volume(manga_id: int, numero: int, db: Session = Depends(get_db)):
+    return MangaVolumeController.obter_volume(db, manga_id, numero)
+
+
+@rota_mangas.put("/{manga_id}/volumes/{numero}")
+def atualizar_volume(manga_id: int, numero: int, comprado: bool, db: Session = Depends(get_db)):
+    return MangaVolumeController.atualizar_volume(db, manga_id, numero, comprado)
+
+@rota_mangas.delete("/{manga_id}/volumes/{numero}")
+def remover_volume(manga_id: int, numero: int, db: Session = Depends(get_db)):
+    return MangaVolumeController.remover_volume(db, manga_id, numero)
+
+@rota_mangas.post("/{manga_id}/volumes")
+def adicionar_volume(manga_id: int, numero: int, db: Session = Depends(get_db)):
+    return MangaVolumeController.adicionar_volume(db, manga_id, numero)

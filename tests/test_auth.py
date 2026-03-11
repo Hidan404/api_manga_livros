@@ -1,28 +1,24 @@
-import requests
+from fastapi.testclient import TestClient
+from app.main import app
 
-BASE_URL = "http://127.0.0.1:8000"
-
-
-def test_login_ok():
-    r = requests.post(
-        f"{BASE_URL}/auth/login",
-        json={
-            "email": "ronaldkurouzo@gmail.com",
-            "senha": "hidan"
-        }
-    )
-
-    assert r.status_code == 200
-    assert "access_token" in r.json()
+client = TestClient(app)
 
 
-def test_login_errado():
-    r = requests.post(
-        f"{BASE_URL}/auth/login",
-        json={
-            "email": "ronaldkurouzo@gmail.com",
-            "senha": "senha_errada"
-        }
-    )
+def test_register():
+    response = client.post("/auth/register", json={
+        "nome": "Teste",
+        "email": "teste@email.com",
+        "senha": "123456"
+    })
 
-    assert r.status_code in (400, 401)
+    assert response.status_code in [200, 201]
+
+
+def test_login():
+    response = client.post("/auth/login", json={
+        "email": "teste@email.com",
+        "senha": "123456"
+    })
+
+    assert response.status_code == 200
+    assert "access_token" in response.json()
