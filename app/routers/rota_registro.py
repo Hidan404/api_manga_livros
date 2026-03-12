@@ -7,6 +7,7 @@ from app.utils.senha_hasher import SenhaHasher
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
 
+
 rota = APIRouter(prefix="/auth")
 
 @rota.post("/register")

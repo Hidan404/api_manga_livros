@@ -19,3 +19,5 @@ def remover_favorito(favorito_id: int, db: Session = Depends(get_db), usuario=De
 @rota_favoritos_manga.get("/")
 def listar_favoritos(db: Session = Depends(get_db), usuario=Depends(get_current_user)):
     return FavoritoMangaController.listar_favoritos(db, usuario["id"])
+
+

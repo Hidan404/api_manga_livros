@@ -1,13 +1,15 @@
 from fastapi.testclient import TestClient
 from app.main import app
+import uuid
 
 client = TestClient(app)
 
 
 def test_register():
+    email = f"teste{uuid.uuid4()}@email.com"
     response = client.post("/auth/register", json={
         "nome": "Teste",
-        "email": "teste@email.com",
+        "email": email,
         "senha": "123456"
     })
 
@@ -15,8 +17,19 @@ def test_register():
 
 
 def test_login():
+
+    email = f"teste{uuid.uuid4()}@email.com"
+
+    # cria usuário primeiro
+    client.post("/auth/register", json={
+        "nome": "Teste",
+        "email": email,
+        "senha": "123456"
+    })
+
+    # agora faz login
     response = client.post("/auth/login", json={
-        "email": "teste@email.com",
+        "email": email,
         "senha": "123456"
     })
 

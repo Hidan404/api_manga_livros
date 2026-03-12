@@ -34,3 +34,8 @@ class MangaResponse(MangaBase):
 
     class Config:
         from_attributes = True
+
+
+class VolumeCreate(BaseModel):
+    numero: int = Field(..., ge=1)
+    #capa_url: Optional[str] = None         

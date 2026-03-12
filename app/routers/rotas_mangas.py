@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
 
 from app.database.conexao import get_db
-from app.schemas.manga_schemas import MangaCreate, MangaUpdate
+from app.schemas.manga_schemas import MangaCreate, MangaUpdate, VolumeCreate
 from app.controllers.manga_controller import MangaController
 from app.core.dependecia_auth import require_role
 from app.utils.dependecias_utils import get_current_user
@@ -23,7 +23,7 @@ def obter_manga(manga_id: int, db: Session = Depends(get_db)):
 
 
 # Somente ADMIN pode criar
-@rota_mangas.post("/", dependencies=[Depends(require_role("admin"))])
+@rota_mangas.post("/", dependencies=[Depends(require_role("admin"))], status_code=201)
 def criar_manga(
     dados: MangaCreate,
     db: Session = Depends(get_db),
@@ -98,6 +98,6 @@ def atualizar_volume(manga_id: int, numero: int, comprado: bool, db: Session = D
 def remover_volume(manga_id: int, numero: int, db: Session = Depends(get_db)):
     return MangaVolumeController.remover_volume(db, manga_id, numero)
 
-@rota_mangas.post("/{manga_id}/volumes")
-def adicionar_volume(manga_id: int, numero: int, db: Session = Depends(get_db)):
-    return MangaVolumeController.adicionar_volume(db, manga_id, numero)
+@rota_mangas.post("/{manga_id}/volumes", status_code=201, dependencies=[Depends(require_role("admin"))])
+def adicionar_volume(manga_id: int, volume: VolumeCreate, db: Session = Depends(get_db)):
+    return MangaVolumeController.adicionar_volume(db, manga_id, volume.numero)

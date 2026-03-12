@@ -11,7 +11,8 @@ def test_criar_livro(auth_token):
         headers={"Authorization": f"Bearer {auth_token}"},
         json={
             "titulo": "Clean Code",
-            "autor": "Robert Martin"
+            "autor": "Robert Martin",
+            "genero": "Programação",
         }
     )
 

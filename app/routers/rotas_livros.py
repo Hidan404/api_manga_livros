@@ -21,7 +21,7 @@ def obter_livro(livro_id: int, db: Session = Depends(get_db)):
 
 
 # Somente ADMIN pode criar livro
-@rota_livros.post("/", dependencies=[Depends(require_role("admin"))])
+@rota_livros.post("/", dependencies=[Depends(require_role("admin"))], status_code=201)
 def criar_livro(
     dados: LivroCreate,
     db: Session = Depends(get_db),
