@@ -10,12 +10,12 @@ rota = APIRouter(prefix="/auth", tags=["Autenticação"])
 auth_controller = AuthController()
 
 #Essa rota realiza o login do usuário
-@rota.post("/login", response_model=TokenResposta)
+@rota.post("/login", response_model=TokenResposta, summary="Login de usuário", description="Autentica um usuário e retorna tokens de acesso e refresh.")
 def login(payload: LoginSchema, db: Session = Depends(get_db)):
     return auth_controller.login(db, payload.email, payload.senha)
 
 
-@rota.post("/refresh")
+@rota.post("/refresh", summary="Atualizar token", description="Atualiza o token de acesso usando o token de refresh.")
 def refresh_token(payload: RefreshTokenSchema, db: Session = Depends(get_db)):
     return auth_controller.refresh_token(payload.refresh_token, db)
 

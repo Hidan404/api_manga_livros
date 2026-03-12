@@ -10,7 +10,7 @@ from fastapi import HTTPException, status
 
 rota = APIRouter(prefix="/auth")
 
-@rota.post("/register")
+@rota.post("/register", summary="Registrar novo usuário", description="Cria um novo usuário com email e senha.")
 def registrar(dados: UsuarioCriar, db: Session = Depends(get_db)):
     senha_hashe = SenhaHasher()
     senha_hash = senha_hashe.hash_criar(dados.senha)

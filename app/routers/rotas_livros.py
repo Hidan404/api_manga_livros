@@ -10,18 +10,18 @@ from app.utils.dependecias_utils import get_current_user
 rota_livros = APIRouter(prefix="/livros", tags=["Livros"])
 
 
-@rota_livros.get("/")
+@rota_livros.get("/", summary="Listar livros", description="Retorna uma lista de todos os livros disponíveis.")
 def listar_livros(db: Session = Depends(get_db)):
     return LivroController.listar(db)
 
 
-@rota_livros.get("/{livro_id}")
+@rota_livros.get("/{livro_id}", summary="Obter livro", description="Retorna os detalhes de um livro específico.")
 def obter_livro(livro_id: int, db: Session = Depends(get_db)):
     return LivroController.obter_por_id(db, livro_id)
 
 
 # Somente ADMIN pode criar livro
-@rota_livros.post("/", dependencies=[Depends(require_role("admin"))], status_code=201)
+@rota_livros.post("/", summary="Criar livro", description="Cria um novo livro com os dados fornecidos.", dependencies=[Depends(require_role("admin"))], status_code=201)
 def criar_livro(
     dados: LivroCreate,
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ def criar_livro(
 
 
 # Somente ADMIN pode atualizar livro
-@rota_livros.put("/{livro_id}", dependencies=[Depends(require_role("admin"))])
+@rota_livros.put("/{livro_id}", summary="Atualizar livro", description="Atualiza os dados de um livro específico.", dependencies=[Depends(require_role("admin"))])
 def atualizar_livro(
     livro_id: int,
     dados: LivroUpdate,
@@ -42,7 +42,7 @@ def atualizar_livro(
 
 
 # Somente ADMIN pode deletar
-@rota_livros.delete("/{livro_id}", dependencies=[Depends(require_role("admin"))])
+@rota_livros.delete("/{livro_id}", dependencies=[Depends(require_role("admin"))], summary="Deletar livro", description="Remove um livro específico do sistema.")
 def deletar_livro(
     livro_id: int,
     db: Session = Depends(get_db),
