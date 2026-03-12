@@ -10,7 +10,27 @@ from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title="API Manga Livros",
+    description="""
+API para gerenciamento de coleções de mangás e livros.
+
+Funcionalidades principais:
+
+- Autenticação com JWT
+- Gerenciamento de Mangás
+- Controle de Volumes
+- Gerenciamento de Livros
+- Sistema de Favoritos
+- Upload de capas
+""",
+    version="1.0.0",
+    contact={
+        "name": "Ronald Sousa",
+        "url": "https://github.com/Hidan404",
+    }
+)
+
 origins = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
