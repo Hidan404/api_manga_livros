@@ -1,13 +1,13 @@
-version: "3.9"
-
 services:
 
   db:
     image: postgres:15
     container_name: postgres_mangas
     restart: always
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: mangas_livros
     ports:
       - "5433:5432"
     volumes:
@@ -25,6 +25,7 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   postgres_data:
