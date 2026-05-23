@@ -12,7 +12,11 @@ SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 def criar_engine_com_retry():
     for i in range(10):
         try:
-            engine = create_engine(SQLALCHEMY_DATABASE_URL)
+            engine = create_engine(
+                SQLALCHEMY_DATABASE_URL,
+                pool_pre_ping=True,
+                connect_args={"sslmode": "require"}
+            )
             connection = engine.connect()
             connection.close()
             print("✅ Banco conectado!")
