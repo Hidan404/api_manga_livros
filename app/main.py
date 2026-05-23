@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.database.conexao import Base, criacao as engine
+from app.database.conexao import Base, engine
 from app.routers.rotas_autentica import rota as auth_router
 from app.routers.rotas_livros import rota_livros
 from app.routers.rotas_mangas import rota_mangas
