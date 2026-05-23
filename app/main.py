@@ -34,12 +34,16 @@ Funcionalidades principais:
 origins = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
-    "http://localhost",
+    "http://0.0.0.0",
     "http://127.0.0.1",
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "https://seudominio.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,7 +57,7 @@ app.include_router(rota_registro)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8109, reload=True)
 
 
 

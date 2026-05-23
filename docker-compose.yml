@@ -2,7 +2,6 @@ services:
 
   db:
     image: postgres:15
-    container_name: postgres_mangas
     restart: always
     environment:
       POSTGRES_USER: usuario
@@ -15,17 +14,12 @@ services:
 
   api:
     build: .
-    container_name: api_mangas
-    restart: always
+    ports:
+      - "8000:8000"
     env_file:
       - .env
     depends_on:
       - db
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   postgres_data:
