@@ -2,41 +2,36 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 import os
-import time
 
 load_dotenv()
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
-# 🔥 Função que espera o banco subir
-def criar_engine_com_retry():
-    for i in range(10):
-        try:
-            engine = create_engine(
-                SQLALCHEMY_DATABASE_URL,
-                pool_pre_ping=True,
-                connect_args={"sslmode": "require"}
-            )
-            connection = engine.connect()
-            connection.close()
-            print("✅ Banco conectado!")
-            return engine
-        except Exception as e:
-            print(f"⏳ Tentando conectar no banco... ({i+1}/10)")
-            time.sleep(3)
-    
-    raise Exception("❌ Não conseguiu conectar no banco")
-
-# usa o retry aqui
-criacao = criar_engine_com_retry()
+# ✅ ENGINE (criado direto, sem retry no import) apelei para ia nessa
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    pool_pre_ping=True,
+    connect_args={"sslmode": "require"}
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=criacao
+    bind=engine
 )
 
 Base = declarative_base()
+
+
+# ✅ função de conexão (opcional, só para debug) kkk
+def testar_conexao():
+    try:
+        conn = engine.connect()
+        conn.close()
+        print("✅ Banco conectado!")
+    except Exception as e:
+        print("❌ Erro ao conectar no banco:", e)
+
 
 def get_db():
     db = SessionLocal()
