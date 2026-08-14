@@ -8,18 +8,30 @@ services:
       POSTGRES_PASSWORD: senha
       POSTGRES_DB: mangas_livros
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U usuario -d mangas_livros"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "8109:8000"
+    # A URL abaixo sobrescreve a do .env: dentro da rede do compose,
+    # o banco é acessível pelo nome do serviço `db` na porta interna 5432.
+    environment:
+      DATABASE_URL: postgresql+psycopg://usuario:senha@db:5432/mangas_livros
+      SSL_MODE: disable
+      ENVIRONMENT: development
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:

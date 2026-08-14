@@ -1,17 +1,26 @@
+"""Conexão com o banco de dados (Sprint 1).
+
+Mudanças:
+- Lê a URL do banco e o modo SSL da configuração central (`config`),
+  eliminando o `sslmode=require` hardcoded que quebrava ambientes sem SSL.
+- Remove `load_dotenv()` daqui: o `config` (pydantic-settings) já carrega o `.env`.
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
+from app.core.configuracao import config
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+# URL completa vem da configuração (ambiente ou .env)
+SQLALCHEMY_DATABASE_URL = config.DATABASE_URL
 
-# ✅ ENGINE (criado direto, sem retry no import) apelei para ia nessa
+# sslmode configurável: require para Supabase; disable/prefer para local
+connect_args = {"sslmode": config.SSL_MODE}
+
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     pool_pre_ping=True,
-    connect_args={"sslmode": "require"}
+    connect_args=connect_args,
 )
 
 SessionLocal = sessionmaker(
@@ -23,7 +32,7 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 
-# ✅ função de conexão (opcional, só para debug) kkk
+# Função de diagnóstico (opcional, só para debug)
 def testar_conexao():
     try:
         conn = engine.connect()

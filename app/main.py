@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from app.database.conexao import Base, engine
 from app.routers.rotas_autentica import rota as auth_router
 from app.routers.rotas_livros import rota_livros
 from app.routers.rotas_mangas import rota_mangas
@@ -7,8 +6,6 @@ from app.routers.rotas_favoritos_mangas import rota_favoritos_manga
 from app.routers.rotas_favoritos_livros import routa_favoritos_livros
 from app.routers.rota_registro import rota as rota_registro
 from fastapi.middleware.cors import CORSMiddleware
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="API Manga Livros",
