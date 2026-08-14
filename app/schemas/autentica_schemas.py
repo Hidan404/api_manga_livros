@@ -1,4 +1,6 @@
+
 from pydantic import BaseModel, EmailStr
+
 
 class LoginSchema(BaseModel):
     email: EmailStr
@@ -14,6 +16,7 @@ class Token(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+    role: str | None = None
 
 
 class RefreshTokenSchema(BaseModel):

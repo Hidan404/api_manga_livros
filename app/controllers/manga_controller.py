@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.core.capa_upload import fazer_upload
 from app.models.manga_model import Manga
-from app.models.favoritos_model import UsuarioFavoritoManga
 from app.schemas.manga_schemas import MangaCreate, MangaUpdate
 
 
@@ -43,16 +44,16 @@ class MangaController:
     @staticmethod
     def deletar(db: Session, manga_id: int):
         manga = MangaController.obter_por_id(db, manga_id)
-        db.query(UsuarioFavoritoManga).filter(UsuarioFavoritoManga.manga_id == manga_id).delete()
+        # Volumes e favoritos são removidos automaticamente (FKs ON DELETE CASCADE).
         db.delete(manga)
         db.commit()
         return {"mensagem": "Mangá removido com sucesso."}
-    
+
     @staticmethod
     def upload_capa(db: Session, manga_id: int, arquivo):
         manga = MangaController.obter_por_id(db, manga_id)
-        conteudo = arquivo.file.read()
-        manga.capa_url = conteudo
+        url = fazer_upload(arquivo, pasta="mangas", public_id=str(manga.id))
+        manga.capa_url = url
         db.commit()
         db.refresh(manga)
-        return {"mensagem": "Capa do mangá atualizada com sucesso."}
+        return {"mensagem": "Capa do mangá atualizada com sucesso.", "capa_url": url}

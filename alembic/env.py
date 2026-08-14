@@ -1,7 +1,6 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
@@ -11,11 +10,12 @@ from app.core.configuracao import config as app_config
 # Importa a Base e TODOS os models para popular o metadata do autogenerate
 from app.database.conexao import Base
 from app.models import (  # noqa: F401
-    usuario_model,
+    favoritos_model,
+    livros_model,
     manga_model,
     manga_volume_model,
-    livros_model,
-    favoritos_model,
+    refresh_token_model,
+    usuario_model,
 )
 
 # this is the Alembic Config object, which provides

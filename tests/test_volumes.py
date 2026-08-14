@@ -1,55 +1,61 @@
-from fastapi.testclient import TestClient
-from app.main import app
+def _criar_manga(client, headers):
+    resposta = client.post("/mangas/", headers=headers, json={
+        "titulo": "One Piece", "autor": "Eiichiro Oda",
+        "genero": "Shounen", "status": "Em andamento",
+    })
+    assert resposta.status_code == 201, resposta.text
+    return resposta.json()["id"]
 
-client = TestClient(app)
 
-"""def test_adicionar_volume(auth_token):
+def test_adicionar_volume(client, admin_headers):
+    manga_id = _criar_manga(client, admin_headers)
 
-    # cria mangá primeiro
-    manga = client.post(
-        "/mangas",
-        headers={"Authorization": f"Bearer {auth_token}"},
-        json={
-            "titulo": "Naruto",
-            "autor": "Kishimoto"
-        }
-    )
-
-    manga_id = manga.json()["id"]
-    print(manga.status_code, manga.json())
-
-    # adiciona volume
-    response = client.post(
+    resposta = client.post(
         f"/mangas/{manga_id}/volumes",
-        headers={"Authorization": f"Bearer {auth_token}"},
-        json={
-            "numero": 1
-        }
+        headers=admin_headers,
+        json={"numero": 1, "comprado": False},
     )
+    assert resposta.status_code == 201, resposta.text
+    corpo = resposta.json()
+    assert corpo["numero"] == 1
+    assert corpo["comprado"] is False
 
-    assert response.status_code == 201"""
 
-def test_adicionar_volume(auth_token):
+def test_volume_duplicado(client, admin_headers):
+    manga_id = _criar_manga(client, admin_headers)
+    client.post(f"/mangas/{manga_id}/volumes", headers=admin_headers, json={"numero": 1})
+    resposta = client.post(f"/mangas/{manga_id}/volumes", headers=admin_headers, json={"numero": 1})
+    assert resposta.status_code == 400
 
-    manga = client.post(
-        "/mangas",
-        headers={"Authorization": f"Bearer {auth_token}"},
-        json={
-            "titulo": "Naruto",
-            "autor": "Kishimoto",
-            "genero": "Shonen",
-            "status": "Completo"
-        }
+
+def test_atualizar_volume_via_body(client, admin_headers):
+    manga_id = _criar_manga(client, admin_headers)
+    client.post(f"/mangas/{manga_id}/volumes", headers=admin_headers, json={"numero": 1})
+
+    resposta = client.put(
+        f"/mangas/{manga_id}/volumes/1",
+        json={"comprado": True, "capa_volume": "https://img.exemplo/v1.jpg"},
     )
+    assert resposta.status_code == 200, resposta.text
+    corpo = resposta.json()
+    assert corpo["comprado"] is True
+    assert corpo["capa_volume"].startswith("https://")
 
-    assert manga.status_code == 201
 
-    manga_id = manga.json()["id"]
+def test_listar_volumes(client, admin_headers):
+    manga_id = _criar_manga(client, admin_headers)
+    client.post(f"/mangas/{manga_id}/volumes", headers=admin_headers, json={"numero": 1})
+    client.post(f"/mangas/{manga_id}/volumes", headers=admin_headers, json={"numero": 2})
 
-    response = client.post(
-        f"/mangas/{manga_id}/volumes",
-        headers={"Authorization": f"Bearer {auth_token}"},
-        json={"numero": 1}
-    )
+    resposta = client.get(f"/mangas/{manga_id}/volumes")
+    assert resposta.status_code == 200
+    assert [v["numero"] for v in resposta.json()] == [1, 2]
 
-    assert response.status_code == 201
+
+def test_remover_volume(client, admin_headers):
+    manga_id = _criar_manga(client, admin_headers)
+    client.post(f"/mangas/{manga_id}/volumes", headers=admin_headers, json={"numero": 1})
+
+    resposta = client.delete(f"/mangas/{manga_id}/volumes/1")
+    assert resposta.status_code == 200
+    assert client.get(f"/mangas/{manga_id}/volumes").json() == []

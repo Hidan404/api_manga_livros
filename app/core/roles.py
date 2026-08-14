@@ -12,7 +12,7 @@ Centralizar em um único enum permite:
 
 Sintaxe
 -------
-``RoleUsuario(str, Enum)``: enum que herda de ``str``.
+``RoleUsuario(StrEnum)``: enum cujos membros também são ``str``.
 Ao herdar de ``str``, o valor serializa como string pura (ex.: ``"admin"``)
 no banco, no JWT e no Pydantic — em vez do nome do membro (``RoleUsuario.ADMIN``).
 
@@ -23,12 +23,10 @@ Uso previsto (Sprints 2+)
 - Schemas Pydantic aceitam apenas os valores de ``ROLES_VALIDAS``.
 """
 
-from enum import Enum
-
-from typing import Set
+from enum import StrEnum
 
 
-class RoleUsuario(str, Enum):
+class RoleUsuario(StrEnum):
     """Roles válidas no sistema."""
 
     ADMIN = "admin"
@@ -37,4 +35,4 @@ class RoleUsuario(str, Enum):
 
 # Set derivado do enum — validações usam SEMPRE este conjunto,
 # garantindo que nada fique dessincronizado do enum acima.
-ROLES_VALIDAS: Set[str] = {role.value for role in RoleUsuario}
+ROLES_VALIDAS: set[str] = {role.value for role in RoleUsuario}

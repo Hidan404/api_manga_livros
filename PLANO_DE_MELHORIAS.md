@@ -167,10 +167,10 @@ memória + refresh em HttpOnly — mais robusta, porém mais complexa; anotada c
 ### Sprint 3 — Modelagem e migração do banco
 **Objetivo:** aplicar as correções da seção 3 via Alembic, sem perder dados em produção.
 
-- [ ] Migrações: UniqueConstraints, FKs `nullable=False`, `ondelete=CASCADE`, colunas novas
-- [ ] Dropar `livros.capa_livro`; padronizar `capa_url`
-- [ ] Criar tabela `refresh_tokens`
-- [ ] Corrigir `criar_tabelas.py` (importar `engine`) ou removê-lo (Alembic substitui)
+- [x] Migrações: UniqueConstraints, FKs `nullable=False`, `ondelete=CASCADE`, colunas novas
+- [x] Dropar `livros.capa_livro`; padronizar `capa_url`
+- [x] Criar tabela `refresh_tokens`
+- [x] Corrigir `criar_tabelas.py` (importar `engine`) ou removê-lo (Alembic substitui)
 
 **Aceite:** `alembic upgrade head` aplica no Supabase de produção sem perder dados; índices únicos funcionando.
 
@@ -179,14 +179,14 @@ memória + refresh em HttpOnly — mais robusta, porém mais complexa; anotada c
 ### Sprint 4 — Correção de bugs em schemas/controllers/rotas
 **Objetivo:** alinhar schemas/models e eliminar dead code.
 
-- [ ] `MangaUpdate`: remover `volumes`/`descricao`; usar `sinopse`
-- [ ] `MangaCreate` completo (`artista`, `data_lancamento`, `capa_url`)
-- [ ] `MangaResponse`/`LivroResponse` sincronizados com os models
-- [ ] Corrigir `usuario_controller.py` (dead code quebrado) ou removê-lo
-- [ ] `LivroController.deletar`: tratar favoritos (via CASCADE do banco)
-- [ ] Response models em todos os endpoints (sem ORM puro)
-- [ ] Limpeza: typo `svhemas_favoritos.py`, `routa_favoritos_livros`, import duplicado em `rotas_autentica.py`, remover `app/teste.py` e rota `/teste-admin`
-- [ ] `comprado` de volume passa a body (`VolumeUpdate`), não query param
+- [x] `MangaUpdate`: remover `volumes`/`descricao`; usar `sinopse`
+- [x] `MangaCreate` completo (`artista`, `data_lancamento`, `capa_url`)
+- [x] `MangaResponse`/`LivroResponse` sincronizados com os models
+- [x] Corrigir `usuario_controller.py` (dead code quebrado) ou removê-lo
+- [x] `LivroController.deletar`: tratar favoritos (via CASCADE do banco)
+- [x] Response models em todos os endpoints (sem ORM puro)
+- [x] Limpeza: typo `svhemas_favoritos.py`, `routa_favoritos_livros`, import duplicado em `rotas_autentica.py`, remover `app/teste.py` e rota `/teste-admin`
+- [x] `comprado` de volume passa a body (`VolumeUpdate`), não query param
 
 **Aceite:** PUT de mangá com `sinopse` funciona; deletar livro favoritado não quebra; `/docs` sem endpoints de teste.
 
@@ -195,9 +195,9 @@ memória + refresh em HttpOnly — mais robusta, porém mais complexa; anotada c
 ### Sprint 5 — Upload de capas (Cloudinary)
 **Objetivo:** imagens fora do Postgres; apenas URLs gravadas no banco.
 
-- [ ] Config `CLOUDINARY_URL` + SDK; uploads salvam no Cloudinary e gravam a **URL** em `capa_url`/`capa_volume`
-- [ ] Validação: tamanho máximo (ex.: 5MB), content-type e extensões permitidas
-- [ ] Corrigir leitura binária em colunas `String` (bug atual)
+- [x] Config `CLOUDINARY_URL` + SDK; uploads salvam no Cloudinary e gravam a **URL** em `capa_url`/`capa_volume`
+- [x] Validação: tamanho máximo (ex.: 5MB), content-type e extensões permitidas
+- [x] Corrigir leitura binária em colunas `String` (bug atual)
 
 **Aceite:** upload de capa retorna URL acessível; arquivo inválido retorna 400.
 
@@ -206,12 +206,12 @@ memória + refresh em HttpOnly — mais robusta, porém mais complexa; anotada c
 ### Sprint 6 — Testes, CI e qualidade
 **Objetivo:** testes confiáveis e pipeline automatizada.
 
-- [ ] Refatorar testes: banco isolado (fixture); remover dependência de `hidan@gmail.com`
-- [ ] Fixture cria usuário admin
-- [ ] Cobrir: auth (cookies, refresh, revogação), CRUD mangas/livros/volumes, favoritos, upload
-- [ ] CI GitHub Actions rodando `pytest` a cada push
-- [ ] Lint/format com `ruff`
-- [ ] Endpoint `/health` + logging estruturado
+- [x] Refatorar testes: banco isolado (fixture); remover dependência de `hidan@gmail.com`
+- [x] Fixture cria usuário admin
+- [x] Cobrir: auth (cookies, refresh, revogação), CRUD mangas/livros/volumes, favoritos, upload
+- [x] CI GitHub Actions rodando `pytest` a cada push
+- [x] Lint/format com `ruff`
+- [x] Endpoint `/health` + logging estruturado
 
 **Aceite:** `pytest` verde em ambiente limpo; CI passando.
 
@@ -220,9 +220,9 @@ memória + refresh em HttpOnly — mais robusta, porém mais complexa; anotada c
 ### Sprint 7 — Deploy Render + Supabase (documentado)
 **Objetivo:** reproduzir o deploy seguindo só o doc (sem dados reais no repo).
 
-- [ ] `docs/ROTEIRO_DEPLOY.md` completo (ver seção 7)
-- [ ] Roteiro de rotação de secrets
-- [ ] Checklist de verificação pós-deploy
+- [x] `docs/ROTEIRO_DEPLOY.md` completo (ver seção 7)
+- [x] Roteiro de rotação de secrets
+- [x] Checklist de verificação pós-deploy
 
 **Aceite:** qualquer pessoa reproduz o deploy só seguindo o doc.
 
@@ -285,3 +285,4 @@ docs/ROTEIRO_DEPLOY.md            Sprint 0 (novo)
 |---|---|
 | 2026-08-14 | Capas → Cloudinary; refresh → tabela `refresh_tokens`; migrações → Alembic; deploy → doc com placeholders |
 | 2026-08-14 | Roles mantidas `user`/`admin` (extensível); token → HttpOnly cookies com rotação |
+| 2026-08-14 | Sprints 0–6 concluídas (docs/SPRINT_0..6.md); resta Sprint 7 (deploy) |

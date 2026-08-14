@@ -35,6 +35,11 @@
 | `COOKIE_DOMAIN` | Domínio do cookie (opcional) | `<seu-dominio>` |
 | `CLOUDINARY_URL` | Credenciais do Cloudinary | `cloudinary://<key>:<secret>@<cloud>` |
 | `ENVIRONMENT` | `production` / `development` | `production` |
+| `ADMIN_EMAIL` | Email do admin (seed_admin.py) | `admin@seudominio.com` |
+| `ADMIN_SENHA` | Senha do admin (seed_admin.py) | `<senha-forte>` |
+
+> As variáveis `POSTGRES_DB/USER/PASSWORD` são usadas **só pelo docker-compose local**;
+> não são necessárias no Render.
 
 **Gerar chaves seguras:**
 ```bash
@@ -71,6 +76,13 @@ python -c "import secrets; print(secrets.token_hex(32))"
 3. Em **Environment**, criar env group com todas as variáveis da seção 2 (valores reais aqui)
 4. Deploy automático em push para `main` (ou manual)
 5. Confirmar que a app sobe: acessar `https://<app>.onrender.com/health`
+6. **Criar o admin** (uma vez, após o deploy + migrações):
+   ```bash
+   # No Render, via Shell de uma instância ou execução one-off:
+   python seed_admin.py
+   # Lê ADMIN_EMAIL/ADMIN_SENHA das variáveis de ambiente do Render.
+   ```
+   Resultado: cria o usuário admin (`role=admin`) ou promove se já existir.
 
 ---
 
@@ -99,6 +111,44 @@ alembic upgrade head
 alembic downgrade -1
 ```
 > Sempre verificar se a migração é reversível antes de aplicar em produção.
+
+> A cadeia de migrações (head) cobre: schema baseline, tabela `refresh_tokens`
+> e a Sprint 3 (unique constraints, FKs `nullable=False` + `ON DELETE CASCADE`,
+> `criado_em`/`atualizado_em`, `usuarios.ativo`, remoção de `livros.capa_livro`).
+> Depois do upgrade, confirmar com `alembic check` (0 drift).
+
+---
+
+## 5.5. Cloudinary (upload de capas — Sprint 5)
+
+Imagens não ficam no Postgres: a API envia o arquivo ao Cloudinary e grava apenas a
+**URL** em `capa_url` / `capa_volume`.
+
+### 5.5.1. Criar a conta
+1. Criar conta em https://cloudinary.com (plano free suficiente para estudo)
+2. No dashboard, copiar a URL da conta (API Environment variable):
+   ```
+   cloudinary://<api_key>:<api_secret>@<cloud_name>
+   ```
+3. Colar em `CLOUDINARY_URL` no env do Render (seção 2)
+
+### 5.5.2. Como a API usa
+- `app/core/capa_upload.py` configura o SDK a partir de `CLOUDINARY_URL` e valida o arquivo:
+  - **tamanho** máximo 5MB;
+  - **content-type**: `image/jpeg`, `image/png`, `image/webp`, `image/gif`;
+  - **extensão**: `jpg/jpeg/png/webp/gif`.
+- Endpoints (admin):
+  - `POST /mangas/{manga_id}/upload-capa`
+  - `POST /mangas/{manga_id}/volumes/{numero}/upload-capa`
+  - `POST /livros/{livro_id}/upload-capa`
+- Resposta: `{"mensagem": ..., "capa_url": "https://res.cloudinary.com/..."}`
+
+### 5.5.3. Erros possíveis
+| Caso | Status |
+|---|---|
+| Arquivo inválido (tipo/extensão/tamanho) | `400` |
+| `CLOUDINARY_URL` ausente | `503` (upload não configurado) |
+| Falha no serviço do Cloudinary | `502` |
 
 ---
 
@@ -171,15 +221,16 @@ await fetch("https://<app>.onrender.com/auth/logout", {
 
 ## 9. Checklist de verificação pós-deploy
 
-- [ ] `GET /health` retorna 200
+- [ ] `GET /health` retorna 200 com `banco: ok`
 - [ ] `POST /auth/register` cria usuário com `role=user`
 - [ ] `POST /auth/login` seta cookies `access_token` e `refresh_token` (HttpOnly)
 - [ ] `GET /mangas/` autenticado funciona (cookie enviado)
 - [ ] `POST /auth/refresh` renova o access cookie e revoga o anterior
 - [ ] Reuso do mesmo refresh cookie é **rejeitado** (rotação)
 - [ ] `POST /auth/logout` limpa cookies e revoga o refresh
+- [ ] `seed_admin.py` criou o admin (`role=admin`) usando `ADMIN_EMAIL`/`ADMIN_SENHA`
 - [ ] Somente admin consegue criar/editar/deletar mangás e livros
 - [ ] CRUD de volumes e favoritos funcionando
-- [ ] Upload de capa retorna URL pública do Cloudinary
+- [ ] Upload de capa retorna URL pública do Cloudinary; arquivo inválido → 400
 - [ ] CORS: frontend real (origem explícita) funciona com `credentials: "include"`
-- [ ] `alembic upgrade head` aplicado e índices únicos ativos
+- [ ] `alembic upgrade head` aplicado; `alembic check` sem drift; índices únicos ativos

@@ -1,10 +1,27 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.database.conexao import get_db
 from app.models.favoritos_model import UsuarioFavoritoLivro, UsuarioFavoritoManga
 from app.models.livros_model import Livro
 from app.models.manga_model import Manga
+
+
+def _serializar_livro(favorito: UsuarioFavoritoLivro) -> dict:
+    return {
+        "id": favorito.id,
+        "usuario_id": favorito.usuario_id,
+        "livro_id": favorito.livro_id,
+        "titulo": favorito.livro.titulo,
+    }
+
+
+def _serializar_manga(favorito: UsuarioFavoritoManga) -> dict:
+    return {
+        "id": favorito.id,
+        "usuario_id": favorito.usuario_id,
+        "manga_id": favorito.manga_id,
+        "titulo": favorito.manga.titulo,
+    }
 
 
 class FavoritoLivroController:
@@ -32,12 +49,12 @@ class FavoritoLivroController:
         db.commit()
         db.refresh(favorito)
 
-        return favorito
-
+        return _serializar_livro(favorito)
 
     @staticmethod
     def listar_favoritos(usuario_id: int, db: Session):
-        return db.query(UsuarioFavoritoLivro).filter_by(usuario_id=usuario_id).all()
+        favoritos = db.query(UsuarioFavoritoLivro).filter_by(usuario_id=usuario_id).all()
+        return [_serializar_livro(f) for f in favoritos]
 
     @staticmethod
     def remover_favorito(usuario_id: int, favorito_id: int, db: Session):
@@ -51,14 +68,13 @@ class FavoritoLivroController:
 
         db.delete(favorito)
         db.commit()
-        return {"detail": "Favorito removido com sucesso"}
+        return {"msg": "Favorito removido com sucesso"}
 
 
 class FavoritoMangaController:
 
     @staticmethod
     def adicionar_favorito(db: Session, usuario_id: int, manga_id: int):
-
         manga = db.query(Manga).filter(Manga.id == manga_id).first()
         if not manga:
             raise HTTPException(status_code=404, detail="Manga não encontrado")
@@ -80,11 +96,12 @@ class FavoritoMangaController:
         db.commit()
         db.refresh(favorito)
 
-        return favorito
-    
+        return _serializar_manga(favorito)
+
     @staticmethod
     def listar_favoritos(db: Session, usuario_id: int):
-        return db.query(UsuarioFavoritoManga).filter_by(usuario_id=usuario_id).all()
+        favoritos = db.query(UsuarioFavoritoManga).filter_by(usuario_id=usuario_id).all()
+        return [_serializar_manga(f) for f in favoritos]
 
     @staticmethod
     def remover_favorito(db: Session, usuario_id: int, favorito_id: int):
@@ -98,5 +115,4 @@ class FavoritoMangaController:
 
         db.delete(favorito)
         db.commit()
-        return {"detail": "Favorito removido com sucesso"}
-
+        return {"msg": "Favorito removido com sucesso"}

@@ -7,15 +7,18 @@ Mudanças:
 """
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.core.configuracao import config
 
 # URL completa vem da configuração (ambiente ou .env)
 SQLALCHEMY_DATABASE_URL = config.DATABASE_URL
 
-# sslmode configurável: require para Supabase; disable/prefer para local
-connect_args = {"sslmode": config.SSL_MODE}
+# sslmode é específico do PostgreSQL (Supabase exige require; local disable).
+# Para outros dialetos (ex.: SQLite nos testes), não passamos connect_args.
+connect_args: dict = {}
+if SQLALCHEMY_DATABASE_URL.startswith("postgresql"):
+    connect_args["sslmode"] = config.SSL_MODE
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

@@ -1,0 +1,14 @@
+target-version = "py311"
+line-length = 100
+
+exclude = [
+    ".venv",
+    "alembic/versions",   # migrações são autogeradas
+    "tests/test_api.db",
+]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# B008: Depends(...)/File(...) como default é o padrão do FastAPI.
+# E501: linhas longas toleradas (formatadores preferem quebras manuais quando necessário).
+ignore = ["B008", "E501"]

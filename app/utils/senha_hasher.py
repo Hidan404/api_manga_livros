@@ -12,4 +12,3 @@ class SenhaHasher:
     @staticmethod
     def verificar_senha(senha: str, senha_hash: str) -> bool:
         return pwd_contexto.verify(senha, senha_hash)
- 

@@ -1,98 +1,98 @@
-from datetime import datetime, UTC, timedelta
-from typing import Optional, Dict, Any
+"""Gerenciamento de tokens JWT (Sprint 2).
+
+Correções aplicadas nesta sprint:
+- `create_refresh_token` era definido DUAS vezes (a 2ª sobrescrevia a 1ª e usava
+  `config.ALGORITHM`/`expirar_em` inexistentes) → refresh nunca funcionava.
+- `expirar_em` → `expirar_na` (nome correto do método).
+- Access e refresh usam CHAVES diferentes (`SECRET_KEY` vs `REFRESH_SECRET_KEY`).
+- `ALGORITHM` agora vem de `config.ALGORITHM` (Sprint 1).
+- `decode_token` aceita o segredo por parâmetro para decodificar refresh tokens.
+"""
+
 import secrets
-from jose import jwt, JWTError
+from datetime import UTC, datetime, timedelta
+from typing import Any
+
+from jose import JWTError, jwt
+
 from app.core.configuracao import config
 
 
-class Autenticacao_config():
+class Autenticacao_config:
     def __init__(self):
-        self.ALGORITMO = "HS256"
+        self.ALGORITMO = config.ALGORITHM
         self.SECRET = config.SECRET_KEY
+        self.REFRESH_SECRET = config.REFRESH_SECRET_KEY
 
-    def utc_now(self) ->datetime:
+    def utc_now(self) -> datetime:
         return datetime.now(UTC)
-    
-    def expirar_na(self,minutos: Optional[int] = None, dias: Optional[int] = None) ->datetime:
+
+    def expirar_na(self, minutos: int | None = None, dias: int | None = None) -> datetime:
+        """Retorna datetime de expiração com base em minutos OU dias."""
         if minutos is not None:
             return self.utc_now() + timedelta(minutes=minutos)
         if dias is not None:
-            return self.utc_now() + timedelta(dias=dias)
-        
-        return self.utc_now() + timedelta(minutes=60)
-    
-    def base_payload(self, user_id: int | str, extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+            return self.utc_now() + timedelta(days=dias)
+        return self.utc_now() + timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    def base_payload(self, user_id: int | str, extra: dict[str, Any] | None = None) -> dict[str, Any]:
         payload = {"sub": str(user_id)}
         if extra:
             payload.update(extra)
         return payload
-    
-    def create_access_token(self, user_id: int | str, expires_minutes: Optional[int] = None, role: Optional[str] = None) -> str:
-        """
-        Gera um JWT do tipo 'access'.
-        - user_id: id do usuário (colocar em sub)
-        - expires_minutes: sobrescreve a duração padrão (em minutos)
-        - role: se quiser incluir role no payload
-        """
+
+    def create_access_token(self, user_id: int | str, expires_minutes: int | None = None, role: str | None = None) -> str:
+        """Gera um JWT do tipo 'access' assinado com SECRET_KEY."""
         expire = self.expirar_na(minutos=expires_minutes or config.ACCESS_TOKEN_EXPIRE_MINUTES)
         payload = self.base_payload(user_id, {"type": "access", "exp": int(expire.timestamp())})
         if role:
             payload["role"] = role
-        token = jwt.encode(payload, self.SECRET, algorithm=self.ALGORITMO)
+        return jwt.encode(payload, self.SECRET, algorithm=self.ALGORITMO)
 
-        return token
-    
-    def create_refresh_token(self, user_id: int | str, expires_days: Optional[int] = None) -> str:
-        """
-        Gera um JWT do tipo 'refresh' com um 'jti' (id único).
-        Salvamos o JWT ou o jti no banco para poder revogar.
-        """
-        expire = self.expirar_na(days=expires_days or config.REFRESH_TOKEN_EXPIRE_DAYS)
-        jti = secrets.token_hex(16)  # identificador único do token
-        payload = self.base_payload(user_id, {"type": "refresh", "exp": int(expire.timestamp()), "jti": jti})
-        token = jwt.encode(payload, self.SECRET, algorithm=self.ALGORITMO)
-        return token
+    def create_refresh_token(self, user_id: int | str, expires_days: int | None = None) -> str:
+        """Gera um JWT do tipo 'refresh' assinado com REFRESH_SECRET_KEY.
 
-    def decode_token(self, token: str) -> Dict[str, Any]:
+        Inclui um 'jti' (id único) que é persistido na tabela `refresh_tokens`
+        para permitir revogação e detecção de reuso (rotação).
         """
-        Decodifica um token JWT e retorna o payload.
-        Levanta JWTError se inválido/expirado.
-        """
-        try:
-            payload = jwt.decode(token, self.SECRET, algorithms=[self.ALGORITMO])
-            return payload
-        except JWTError as e:
-            # Lançar nocvamente para o caller tratar (HTTPException, log, etc.)
-            raise
+        expire = self.expirar_na(dias=expires_days or config.REFRESH_TOKEN_EXPIRE_DAYS)
+        jti = secrets.token_hex(16)
+        payload = self.base_payload(user_id, {
+            "type": "refresh",
+            "exp": int(expire.timestamp()),
+            "jti": jti,
+        })
+        return jwt.encode(payload, self.REFRESH_SECRET, algorithm=self.ALGORITMO)
 
-    def is_token_type(self, payload: Dict[str, Any], expected: str) -> bool:
-        """
-        Verifica se 'type' do payload bate com 'access' ou 'refresh'
-        """
+    def decode_token(self, token: str, secret: str | None = None) -> dict[str, Any]:
+        """Decodifica e valida um JWT. Levanta JWTError se inválido/expirado."""
+        secret = secret or self.SECRET
+        return jwt.decode(token, secret, algorithms=[self.ALGORITMO])
+
+    def decode_access_token(self, token: str) -> dict[str, Any]:
+        return self.decode_token(token, self.SECRET)
+
+    def decode_refresh_token(self, token: str) -> dict[str, Any]:
+        return self.decode_token(token, self.REFRESH_SECRET)
+
+    def is_token_type(self, payload: dict[str, Any], expected: str) -> bool:
+        """Verifica se o 'type' do payload bate com 'access' ou 'refresh'."""
         return str(payload.get("type", "")).lower() == expected.lower()
 
-    # Uso auxiliar: extrair user_id (sub) com segurança
     @staticmethod
-    def get_user_id_from_payload(payload: Dict[str, Any]) -> Optional[int]:
+    def get_user_id_from_payload(payload: dict[str, Any]) -> int | None:
         sub = payload.get("sub")
         try:
             return int(sub)
         except Exception:
             return None
-        
 
-    def create_refresh_token(self, user_id: int):
-        expire = self.expirar_em(minutos=config.REFRESH_TOKEN_EXPIRE_MINUTES)
-        payload = {"sub": str(user_id), "type": "refresh", "exp": expire}
-        return jwt.encode(payload, config.REFRESH_SECRET_KEY, algorithm=config.ALGORITHM)
-
-
-    def verificar_refresh_token(self, token: str):
+    def verificar_refresh_token(self, token: str) -> dict[str, Any] | None:
+        """Valida o refresh token (chave + tipo). Retorna o payload ou None."""
         try:
-            payload = jwt.decode(token, config.REFRESH_SECRET_KEY, algorithms=[config.ALGORITHM])
-            if payload.get("type") != "refresh":
+            payload = self.decode_refresh_token(token)
+            if not self.is_token_type(payload, "refresh"):
                 raise JWTError("Token inválido para refresh")
             return payload
         except JWTError:
             return None
-    
