@@ -16,7 +16,8 @@ import pytest
 os.environ["ENVIRONMENT"] = "development"
 os.environ["DATABASE_URL"] = "sqlite:///./tests/test_api.db"
 os.environ["SSL_MODE"] = "disable"
-os.environ["CLOUDINARY_URL"] = ""
+# setdefault preserva o valor real em CI (secret CLOUDINARY_URL); localmente fica vazio.
+os.environ.setdefault("CLOUDINARY_URL", "")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import event  # noqa: E402
