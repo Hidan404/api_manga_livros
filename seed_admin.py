@@ -4,6 +4,11 @@ Como usar:
     python seed_admin.py
 
 As variáveis ADMIN_EMAIL e ADMIN_SENHA são lidas do ambiente ou do `.env`.
+
+`ADMIN_SENHA` pode ser:
+  - uma senha em texto puro (o script gera o hash bcrypt); ou
+  - um hash bcrypt já pronto (formato `$2b$...`) — recomendado para não
+    manter a senha em texto puro em lugar nenhum.
 """
 
 import os
@@ -16,6 +21,13 @@ from app.models import Usuario
 from app.utils.senha_hasher import SenhaHasher
 
 load_dotenv()  # carrega ADMIN_EMAIL/ADMIN_SENHA do .env
+
+
+def _hash_da_senha(senha: str) -> str:
+    """Usa a senha direto se já for bcrypt; caso contrário gera o hash."""
+    if senha.startswith("$2"):
+        return senha
+    return SenhaHasher.hash_criar(senha)
 
 
 def criar_admin() -> None:
@@ -37,7 +49,7 @@ def criar_admin() -> None:
             db.add(Usuario(
                 nome=nome,
                 email=email,
-                senha=SenhaHasher.hash_criar(senha),
+                senha=_hash_da_senha(senha),
                 role=RoleUsuario.ADMIN.value,
             ))
             print(f"✅ Admin criado: {email}")

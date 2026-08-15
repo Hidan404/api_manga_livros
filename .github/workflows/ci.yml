@@ -22,6 +22,14 @@ jobs:
       - name: Lint (ruff)
         run: ruff check .
 
+      - name: Segurança (bandit)
+        run: pip install bandit && bandit -r app -x app/tests
+
+      - name: Segurança (pip-audit)
+        # PYSEC-2026-1325 (ecdsa/Minerva): sem fix disponível; app usa só HS256 (HMAC),
+        # nunca P-256/ECDSA — risco não explorável neste contexto.
+        run: pip install pip-audit && pip-audit --ignore-vuln PYSEC-2026-1325
+
       - name: Testes (pytest)
         env:
           CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
