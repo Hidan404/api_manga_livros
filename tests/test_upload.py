@@ -1,5 +1,7 @@
 import io
 
+from app.core import capa_upload
+
 
 def _criar_manga(client, headers):
     resposta = client.post("/mangas/", headers=headers, json={
@@ -40,8 +42,10 @@ def test_upload_extensao_invalida_400(client, admin_headers):
     assert "Extensão" in resposta.json()["detail"]
 
 
-def test_upload_sem_cloudinary_503(client, admin_headers):
-    # CLOUDINARY_URL está vazio nos testes → upload válido mas não configurado
+def test_upload_sem_cloudinary_503(client, admin_headers, monkeypatch):
+    # Simula ambiente SEM CLOUDINARY_URL, independente do valor real
+    # (localmente vazio; na CI vem o secret). Força o caminho "não configurado".
+    monkeypatch.setattr(capa_upload, "_configurar_sdk", lambda: False)
     manga_id = _criar_manga(client, admin_headers)
     resposta = client.post(
         f"/mangas/{manga_id}/upload-capa",
