@@ -4,3 +4,4 @@ __pycache__
 .env
 /app/.env
 tests/test_api.db
+backup_*
